@@ -73,14 +73,19 @@ class SantaliBot:
             print(f"Error saving file: {e}")
 
     def process_text(self, text):
-        """
-        Core Logic:
-        1. Clean the text.
-        2. Identify words containing Ol Chiki script.
-        3. Add to collection.
-        """
-        if not text:
-            return
+    if not text:
+        return
+
+    # This findall will grab EVERY sequence of Ol Chiki characters 
+    # regardless of what punctuation or Latin text is around it.
+    found_words = OL_CHIKI_PATTERN.findall(text)
+    
+    for word in found_words:
+        if len(word) > 1: # Ignore single character noise
+            self.collected_words.add(word)
+    
+    if found_words:
+        print(f"Extracted {len(found_words)} Ol Chiki tokens from text.")
 
         # Split text into tokens by whitespace
         tokens = text.split()
@@ -188,9 +193,9 @@ if __name__ == "__main__":
 
     # 1. API SOURCES (Fast & Reliable)
     # Santali Wikipedia
-    bot.scrape_mediawiki("https://sat.wikipedia.org", search_term="Ol Chiki", limit=300)
+    bot.scrape_mediawiki("https://sat.wikipedia.org", search_term="ᱚᱞ ᱪᱤᱠᱤ", limit=300)
     # Santali Wiktionary (searching for Santali words)
-    bot.scrape_mediawiki("https://sat.wiktionary.org", search_term="Santali", limit=150)
+    bot.scrape_mediawiki("https://sat.wiktionary.org", search_term="ᱥᱟᱱᱛᱟᱲᱤ", limit=150)
     # English Wiktionary (searching for Santali words)
     bot.scrape_mediawiki("https://en.wiktionary.org", search_term="Santali", limit=50)
     # Wikisource
